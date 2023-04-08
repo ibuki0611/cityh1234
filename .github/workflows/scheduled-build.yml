@@ -1,0 +1,44 @@
+name: Scheduled build
+
+on:
+  schedule:
+    # execute every 1 hour 。
+    - cron: '* */1 * * *'
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    permissions:
+        actions: write
+        checks: write
+        contents: write
+        deployments: write
+        issues: write
+        packages: write
+        pull-requests: write
+        repository-projects: write
+        security-events: write
+        statuses: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Get Python version
+        run: python -V
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run Python
+        run: python pyscrape.py
+      - name: git setting
+        run: |
+          git config --local user.email "xxxxxxx@gmail.com"
+          git config --local user.name "tetsuro-nakamura"
+      - name: Commit files
+        run: |
+          git add .
+          git commit -m "Add csv" -a
+          git pull
+          git push origin main
