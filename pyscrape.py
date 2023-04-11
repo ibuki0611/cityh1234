@@ -5,6 +5,9 @@ import datetime
 import os
 import requests
 
+from requests.packages.urllib3.util.retry import Retry
+from requests.adapters import HTTPAdapter
+
 
 def write_to_csv(file_path, tenpo, row):
     if not os.path.isfile(file_path):
@@ -25,9 +28,13 @@ def read_from_csv(file_path):
 
 
 def get_from_url(url):
-    response = requests.get(url)
+    session = requests.Session()
+    retries = Retry(total=5, backoff_factor=1,
+                    status_forcelist=[500, 502, 503, 504])
+    session.mount('https://', HTTPAdapter(max_retries=retries))
+    session.mount('http://', HTTPAdapter(max_retries=retries))
+    response = session.request('GET', 'url', timeout=10)
     response.encoding = response.apparent_encoding
-    print(response.text)
     jikai = response.text.count('次回')
     taiki = response.text.count('待機中')
     return jikai + taiki, taiki
