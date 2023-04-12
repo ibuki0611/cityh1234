@@ -4,6 +4,7 @@ import csv
 import datetime
 import os
 import requests
+import time
 
 from requests.packages.urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
@@ -29,11 +30,16 @@ def read_from_csv(file_path):
 
 def get_from_url(url):
     session = requests.Session()
-    retries = Retry(total=5, backoff_factor=1,
+    retries = Retry(total=5, backoff_factor=10,
                     status_forcelist=[500, 502, 503, 504])
     session.mount('https://', HTTPAdapter(max_retries=retries))
     session.mount('http://', HTTPAdapter(max_retries=retries))
-    response = session.request('GET', url, timeout=10)
+    try:
+        response = session.request('GET', url, timeout=10)
+    except Exception as e:
+        print(f'connection to {url} failed')
+        print(e)
+        return 0, 0
     response.encoding = response.apparent_encoding
     jikai = response.text.count('次回')
     taiki = response.text.count('待機中')
@@ -51,3 +57,4 @@ if __name__ == '__main__':
         output_file = 'output' + str(index) + '.csv'
         output_row = [date, time, shukkin, taiki]
         write_to_csv(output_file, tenpo, output_row)
+        time.sleep(5)
