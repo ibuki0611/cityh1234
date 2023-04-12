@@ -47,14 +47,14 @@ def get_from_url(url):
 
 if __name__ == '__main__':
     now_datetime = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9)))
-    date = now_datetime.strftime("%Y-%m-%d")
-    time = now_datetime.strftime("%H:%M")
+    now_date = now_datetime.strftime("%Y-%m-%d")
+    now_time = now_datetime.strftime("%H:%M")
     list_of_name_url = read_from_csv('url.csv')
     for index, tenpo_url in enumerate(list_of_name_url):
         tenpo = tenpo_url[0]
         url = tenpo_url[1]
         shukkin, taiki = get_from_url(url)
         output_file = 'output' + str(index) + '.csv'
-        output_row = [date, time, shukkin, taiki]
+        output_row = [date, now_time, shukkin, taiki]
         write_to_csv(output_file, tenpo, output_row)
         time.sleep(5)
