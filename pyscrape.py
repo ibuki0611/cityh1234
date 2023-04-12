@@ -33,7 +33,7 @@ def get_from_url(url):
                     status_forcelist=[500, 502, 503, 504])
     session.mount('https://', HTTPAdapter(max_retries=retries))
     session.mount('http://', HTTPAdapter(max_retries=retries))
-    response = session.request('GET', 'url', timeout=10)
+    response = session.request('GET', url, timeout=10)
     response.encoding = response.apparent_encoding
     jikai = response.text.count('次回')
     taiki = response.text.count('待機中')
