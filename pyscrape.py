@@ -55,6 +55,6 @@ if __name__ == '__main__':
         url = tenpo_url[1]
         shukkin, taiki = get_from_url(url)
         output_file = 'output' + str(index) + '.csv'
-        output_row = [date, now_time, shukkin, taiki]
+        output_row = [now_date, now_time, shukkin, taiki]
         write_to_csv(output_file, tenpo, output_row)
         time.sleep(5)
